@@ -2,7 +2,7 @@ use serde::Deserialize;
 use std::{collections::HashSet, env, fs::File, io::BufReader};
 
 fn main() {
-    print!("\x1B[2J\x1B[1;1H");
+    clear_terminal();
     let current_dir = env::current_dir().unwrap();
     println!("INFO: this program current directory: {:?} !!", current_dir);
     let mut a = String::new();
@@ -25,7 +25,7 @@ fn main() {
     }
     match checker(a.trim(), b.trim()) {
         Ok(res) => {
-            print!("\x1B[2J\x1B[1;1H");
+            clear_terminal();
             println!("RESULT: this result is sort descending following from your last follow");
             for i in res {
                 println!("username: {} -> link: {}", i.username, i.url);
@@ -62,6 +62,20 @@ fn checker(
         result.push(temp);
     }
     Ok(result)
+}
+
+fn clear_terminal() {
+    use std::process::Command;
+    if cfg!(target_os = "windows") {
+        Command::new("cmd")
+            .args(&["/C", "cls"])
+            .status()
+            .expect("Failed to execute command");
+    } else {
+        Command::new("clear")
+            .status()
+            .expect("Failed to execute command");
+    }
 }
 
 #[derive(Debug, Deserialize, Hash, PartialEq, Eq)]
